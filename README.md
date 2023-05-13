@@ -126,3 +126,47 @@ contract Attack {
       function() public payable {}
 }
 ```
+# Challenge 3: WheelOfFortune
+
+```solidity
+pragma solidity ^0.4.16;
+
+contract WheelOfFortune {
+  Game[] public games;
+
+  struct Game {
+      address player;
+      uint id;
+      uint bet;
+      uint blockNumber;
+  }
+
+  function spin(uint256 _bet) public payable {
+    require(msg.value >= 0.01 ether);
+    uint gameId = games.length;
+    games.length++;
+    games[gameId].id = gameId;
+    games[gameId].player = msg.sender;
+    games[gameId].bet = _bet;
+    games[gameId].blockNumber = block.number;
+    if (gameId > 0) {
+      uint lastGameId = gameId - 1;
+      uint num = rand(block.blockhash(games[lastGameId].blockNumber), 100);
+      if(num == games[lastGameId].bet) {
+          games[lastGameId].player.transfer(this.balance);
+      }
+    }
+  }
+
+  function rand(bytes32 hash, uint max) pure private returns (uint256 result){
+    return uint256(keccak256(hash)) % max;
+  }
+
+  function() public payable {}
+}
+```
+
+Solution : Challenge 3
+---
+
+Take look at the contract and you will see `rand(block.blockhash(games[lastGameId].blockNumber), 100)` it will become `uint256(keccak256(bytes32(0))) % max` you have to wait for the `256` Block to make next call [EVM Limitations](https://docs.soliditylang.org/en/v0.4.21/units-and-global-variables.html#block-and-transaction-properties), in this case which would be 47.
