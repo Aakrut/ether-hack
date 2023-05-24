@@ -1,6 +1,6 @@
 # ether-hack
 
-### My Ether Hack Solutions
+### Ether Hack Solutions
 
 # Challenge 1 : Azino 777
 
@@ -316,3 +316,7 @@ contract PirateShip {
 ```
 
 Here's Great Write Up I Found On [Medium](https://blog.positive.com/phdays-8-etherhack-contest-writeup-794523f01248).
+
+| :warning: WARNING          |
+|:---------------------------|
+| Don't use this codes in production, All the codes are educational purpose only.      |
