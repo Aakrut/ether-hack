@@ -1,7 +1,5 @@
 # ether-hack
 
-### Ether Hack Solutions
-
 # Challenge 1 : Azino 777
 
 ```Solidity
